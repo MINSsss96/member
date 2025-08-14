@@ -80,4 +80,11 @@ public class MemberService {
         }
 
     }
+
+    public void updateMember(MemberDto dto) {
+        // 1. 받은 DTO를 entity로 변환
+        Member member = MemberDto.toDto(dto);
+        // 2. 수정 요청
+        repository.save(member);
+    }
 }
