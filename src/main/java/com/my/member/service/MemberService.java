@@ -38,13 +38,14 @@ public class MemberService {
 //            dtoList.add(dto);
 //        }
         // fromMemberEntity 메서드로 작업하기
-        //----dtoList = memberList
+//        ----dtoList = memberList
         return memberList
-                .stream()
-                .map( x -> MemberDto.fromMemberEntity(x))
-                .toList();
+                        .stream()
+                        .map( x -> MemberDto.fromMemberEntity(x))
+                        .toList();
+
 //        return dtoList;
-    }
+  }
 
     public void insertMember(MemberDto dto) {
         // 3. 서비스에서 DTO를 entity로 바꾼다.
@@ -86,5 +87,32 @@ public class MemberService {
         Member member = MemberDto.toDto(dto);
         // 2. 수정 요청
         repository.save(member);
+    }
+
+    public List<MemberDto> searchMember(String type, String keyword) {
+        // 조건 1.
+        // 1. type이 비어 있을 때 : 전체 검색
+        // 2. type = 'name' -> searchName
+        // 3. type = 'address' -> searchAddress
+
+        switch (type){
+            case "name" :
+                return repository.searchName(keyword)
+                        .stream()
+                        .map(x -> MemberDto.fromMemberEntity(x))
+                        .toList();
+            case "address" :
+                return repository.searchAddress(keyword)
+                        .stream()
+                        .map(x->MemberDto.fromMemberEntity(x))
+                        .toList();
+            default:
+                return repository
+                        .searchQuery()
+                        .stream()
+                        .map(x -> MemberDto.fromMemberEntity(x))
+                        .toList();
+        }
+
     }
 }

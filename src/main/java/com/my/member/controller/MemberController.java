@@ -29,12 +29,12 @@ public class MemberController {
     }
 
     @GetMapping("/member/insertForm")
-    public String insertFormView(){
+    public String insertFormView() {
         return "/insertForm";
     }
 
     @PostMapping("/member/insert")
-    public String insert(MemberDto dto){
+    public String insert(MemberDto dto) {
         // 1. 폼에서 보낸 정보를 DTO로 받는다.
         System.out.println(dto);
         // 2. 받은 DTO를 서비스로 보낸다.
@@ -47,20 +47,20 @@ public class MemberController {
     }
 
     @PostMapping("/member/delete/{id}")
-    public String deleteMember(@PathVariable("id")Long id){
+    public String deleteMember(@PathVariable("id") Long id) {
         service.deleteMember(id);
 
         return "redirect:/list";
     }
 
     @GetMapping("/member/updateView")
-    public String updateView(@RequestParam("updateId")Long updateId, Model model){
+    public String updateView(@RequestParam("updateId") Long updateId, Model model) {
         // 1. 받은 수정 아이디로 데이터를 검색해온다.(DTO)
         MemberDto dto = service.findMember(updateId);
         // 2. DTO가 비어있는지 확인한다. ID의 유무를 확인 -> 조치를 취함
-        if(ObjectUtils.isEmpty(dto)){
+        if (ObjectUtils.isEmpty(dto)) {
             return "redirect:/list";
-        }else{
+        } else {
             // 3. 받은 DTO를 수정폼으로 보낸다.
             model.addAttribute("dto", dto);
             return "updateForm";
@@ -68,10 +68,28 @@ public class MemberController {
     }
 
     @PostMapping("/member/update")
-    public String update(@ModelAttribute("dto")MemberDto dto){
+    public String update(@ModelAttribute("dto") MemberDto dto) {
         System.out.println(dto);
         service.updateMember(dto);
 
         return "redirect:/list";
+    }
+
+    @GetMapping("/member/search")
+    public String search(@RequestParam("type") String type,
+                         @RequestParam("keyword") String keyword,
+                         Model model) {
+        List<MemberDto> searchList = service.searchMember(type, keyword);
+        if (ObjectUtils.isEmpty(searchList)) {
+            // 검색결과가 없을경우
+            searchList = null;
+            model.addAttribute("list", searchList);
+        } else {
+            // 검색결과가 있을 경우
+            model.addAttribute("list", searchList);
+        }
+        return "showMember";
+        //select * from member where address like "%서울%";
+
     }
 }
