@@ -95,15 +95,23 @@ public class UserController {
     }
 
     @GetMapping("logout")
-    public String logout(HttpSession session){
+    public String logout(HttpSession session) {
         // 세션을 삭제하는 메서드
         session.invalidate();
         return "main";
     }
 
     @GetMapping("myInfo")
-    public String myInfo(HttpSession session){
+    public String myInfo(HttpSession session, Model model) {
         String myEmail = session.getAttribute("loginEmail").toString();
-        return null;
+        // 사용자 정보를 하나 찾아서 온다
+        UserDto user = userService.findOneUser(myEmail);
+        model.addAttribute("user", user);
+        return "/user/userUpdate";
+    }
+
+    @GetMapping("myPage")
+    public String myPage(){
+        return "/user/myPage";
     }
 }
